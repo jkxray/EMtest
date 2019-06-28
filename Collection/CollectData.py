@@ -9,7 +9,7 @@ sys.path.append('../')
 from Prologix import Prologix
 
 pv = 'XF:12IDA-BI:2{EM:BPM1}'
-path='data/'
+path='../data/'
 port='/dev/ttyUSB6'
 data = 'none'
 channel = 'none'
@@ -40,11 +40,11 @@ for arg in sys.argv:
         input_size=int(arg.split('=')[1])
 
 
-    print('###')
-    print('PV is: '+pv)
-    print('Data will be saved to: '+path)
-    print('Port for prologix adapter is: '+port)
-    print('Data type is: '+data)
+print('###')
+print('PV is: '+pv)
+print('Data will be saved to: '+path)
+print('Port for prologix adapter is: '+port)
+print('Data type is: '+data)
 
 pro = Prologix(port)
 
@@ -71,6 +71,8 @@ if data == 'bias':
     print('Finished')
 
 if data == 'dac':
+    print('###')
+    print('channel is '+channel)
     if channel=='none':
         print('please provide channel')
         sys.exit()
@@ -94,6 +96,10 @@ if data == 'dac':
 
 
 if data == 'current':
+    print('###')
+    print('channel is '+channel)
+    print('averaging time is '+averaging_time)
+
     if channel=='none':
         print('please provide channel')
         sys.exit()
