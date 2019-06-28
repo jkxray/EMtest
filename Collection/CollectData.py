@@ -2,12 +2,11 @@ from ophyd import EpicsSignal
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import import_ipynb
-from Prologix import Prologix
 from decimal import Decimal
 import os
 import sys
-
+sys.path.append('../')
+from Prologix import Prologix
 
 pv = 'XF:12IDA-BI:2{EM:BPM1}'
 path='data/'
