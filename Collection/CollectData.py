@@ -12,6 +12,11 @@ pv = 'XF:12IDA-BI:2{EM:BPM1}'
 path='data/'
 port='/dev/ttyUSB6'
 data = 'none'
+channel = 'none'
+averaging_time = 'none'
+num_points = 'none'
+input_size = 15
+saturation_multiplier=1.2
 for arg in sys.argv:
     if arg.split('=')[0]=='help':
         print('Available parameters are:\npv: PV for electrometer under test.\npath: path to save csv files.\nprologix-port: Port path for prologix adapter ("/dev/???")\ndata: Data types.')
@@ -23,6 +28,19 @@ for arg in sys.argv:
         port=arg.split('=')[1]
     if arg.split('=')[0]=='data':
         data=arg.split('=')[1]
+    if arg.split('=')[0]=='channel':
+        channel=int(arg.split('=')[1])
+    if arg.split('=')[0]=='averaging_time':
+        averaging_time=float(arg.split('=')[1])
+    if arg.split('=')[0]=='num_points':
+        num_points=int(arg.split('=')[1])
+    if arg.split('=')[0]=='saturation_multiplier':
+        saturation_multiplier=float(arg.split('=')[1])
+    if arg.split('=')[0]=='input_size':
+        input_size=int(arg.split('=')[1])
+
+
+    print('###')
     print('PV is: '+pv)
     print('Data will be saved to: '+path)
     print('Port for prologix adapter is: '+port)
@@ -31,6 +49,7 @@ for arg in sys.argv:
 pro = Prologix(port)
 
 if data == 'none':
+    print('###')
     print('Please provide data type in the parameters by \'data=TYPE\'\nThe available TYPES are:')
     print('bias\ndac\ncurrent\ndrift')
 if data == 'bias':
@@ -52,6 +71,9 @@ if data == 'bias':
     print('Finished')
 
 if data == 'dac':
+    if channel=='none':
+        print('please provide channel')
+        sys.exit()
     #DAC
     channel=3
     f = open(path+"/dac"+str(channel)+".csv","w")
@@ -72,6 +94,12 @@ if data == 'dac':
 
 
 if data == 'current':
+    if channel=='none':
+        print('please provide channel')
+        sys.exit()
+    if averaging_time=='none':
+        print('please provide averaging_time')
+        sys.exit()
     #CURRENT
     CHANNEL=3
 
@@ -81,10 +109,10 @@ if data == 'current':
     pro.write("sour:curr:rang:auto on",12)
     pro.write("syst:beep:stat off",12)
 
-    INPUTS_SIZE=15
-    SATURATION_MULTIPLIER=1.2
-    AVE_TIME=100e-3
-    NUM_POINTS=100
+    INPUTS_SIZE=input_size
+    SATURATION_MULTIPLIER=saturation_multiplier
+    AVE_TIME=averaging_time
+    NUM_POINTS=num_points
 
     wait_time=AVE_TIME*NUM_POINTS+5
     print('will approximately take '+str((INPUTS_SIZE*wait_time*len(RANGE_VALUES))/60)+' minutes to complete. The interval between each measurement is '+str(wait_time)+' seconds.')
