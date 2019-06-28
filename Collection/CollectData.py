@@ -50,6 +50,7 @@ if data == 'bias':
             out=str(bias)+', '+str(value_RBV)+', '+value_measured.split(',')[0].split('N')[0]
             f.write(out+'\n')
     f.close()
+    print('Finished')
 
 if data == 'dac':
     #DAC
@@ -68,6 +69,7 @@ if data == 'dac':
             f.write(out+'\n')
         EpicsSignal(pv+'DAC'+str(channel)).put(0)
     f.close()
+    print('Finished')
 
 
 if data == 'current':
@@ -130,7 +132,7 @@ if data == 'current':
     pro.write("sour:curr:rang:auto off",12)
     pro.write("output OFF",12)
     pro.write("hi",12) #sends error to 6221 to make it beep when it ends
-
+    print('Finished')
     #f.close()
 
 if data == 'drift':
@@ -175,3 +177,4 @@ if data == 'drift':
                 out=str(time_now)+','+str(np.average(volts))+','+str(np.std(volts))+','+str(range_values[i])+','+str(range_values[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr))
                 f.write(out+'\n')
                 f.flush()
+    print('Finished')
