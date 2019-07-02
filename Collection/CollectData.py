@@ -45,7 +45,10 @@ print('PV is: '+pv)
 print('Data will be saved to: '+path)
 print('Port for prologix adapter is: '+port)
 print('Data type is: '+data)
-
+EpicsSignal(pv+'Acquire').put(1) #sets mode to acquire
+EpicsSignal(pv+'TS:TSAcquireMode').put(1) #sets to circular buffer
+EpicsSignal(pv+'ValuesPerRead').put(50) #sets values per read to 50
+EpicsSignal(pv+'AcquireMode').put(0) #sets acquire mode to continuous
 pro = Prologix(port)
 
 if data == 'none':
