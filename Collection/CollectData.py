@@ -126,13 +126,13 @@ if data == 'current':
     time_init=time.time()
     time_now=0
 
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CalibrationMode').put(1)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CopyADCOffsets.PROC').put(0)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CalibrationMode').put(0)
+    EpicsSignal(pv+'CalibrationMode').put(1)
+    EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
+    EpicsSignal(pv+'CalibrationMode').put(0)
 
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}AveragingTime').put(AVE_TIME)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:TSAveragingTime').put(AVE_TIME)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:TSNumPoints').put(NUM_POINTS)
+    EpicsSignal(pv+'AveragingTime').put(AVE_TIME)
+    EpicsSignal(pv+'TS:TSAveragingTime').put(AVE_TIME)
+    EpicsSignal(pv+'TS:TSNumPoints').put(NUM_POINTS)
 
     #f = open(path+"Serial#6_ver2/current"+str(channel)+".csv","w")
     out='Input (A), range (micro A), range_rbv, mean, std, start/end\n'
@@ -155,8 +155,8 @@ if data == 'current':
                 time.sleep(wait_time-time_delta)
                 time_now=time.time()-time_init
 
-                currentArr=EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:Current'+str(CHANNEL+1)+':TimeSeries',name='TS').value
-                range_rbv=int(EpicsSignal('XF:12IDA-BI:2{EM:BPM1}Range_RBV').value)
+                currentArr=EpicsSignal(pv+'TS:Current'+str(CHANNEL+1)+':TimeSeries',name='TS').value
+                range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
                 out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
                 for current in currentArr:
                     out+=str(current)+'\n'
@@ -180,13 +180,13 @@ if data == 'drift':
     time_now=0
     out='channel, time (s), temperature_voltage mean, temp_voltage std, range (micro A), range_rbv, mean, std'
 
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CalibrationMode').put(1)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CopyADCOffsets.PROC').put(0)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}CalibrationMode').put(0)
+    EpicsSignal(pv+'CalibrationMode').put(1)
+    EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
+    EpicsSignal(pv+'CalibrationMode').put(0)
 
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}AveragingTime').put(1e-3)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:TSAveragingTime').put(100e-3)
-    EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:TSNumPoints').put(100)
+    EpicsSignal(pv+'AveragingTime').put(1e-3)
+    EpicsSignal(pv+'TS:TSAveragingTime').put(100e-3)
+    EpicsSignal(pv+'TS:TSNumPoints').put(100)
 
     pro.write('sens:volt:rang:auto 1',27)
 
@@ -195,7 +195,7 @@ if data == 'drift':
         while time_now < max_time:
             for i in range(len(range_values)):
                 EpicsSignal(pv+'Range').put(i)
-                range_rbv=int(EpicsSignal('XF:12IDA-BI:2{EM:BPM1}Range_RBV').value)
+                range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
                 time_delta=time.time()-time_now-time_init
                 time.sleep((interval/len(range_values))-time_delta)
                 time_now=time.time()-time_init
@@ -206,7 +206,7 @@ if data == 'drift':
                     value_measured=value_measured.split(',')[0].split('N')[0]
                     volts.append(float(value_measured))
                 for channel in range(4):
-                    currentArr=EpicsSignal('XF:12IDA-BI:2{EM:BPM1}TS:Current'+str(channel+1)+':TimeSeries',name='TS').value
+                    currentArr=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value
                     out=str(channel)+','+str(time_now)+','+str(np.average(volts))+','+str(np.std(volts))+','+str(range_values[i])+','+str(range_values[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr))
                     f.write(out+'\n')
     print('Finished')
