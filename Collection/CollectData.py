@@ -17,6 +17,7 @@ averaging_time = 'none'
 num_points = 100
 input_size = 15
 saturation_multiplier=1.2
+trial_id='0'
 for arg in sys.argv:
     if arg.split('=')[0]=='help':
         print('Available parameters are:\npv: PV for electrometer under test.\npath: path to save csv files.\nprologix-port: Port path for prologix adapter ("/dev/???")\ndata: Data types.')
@@ -38,7 +39,8 @@ for arg in sys.argv:
         saturation_multiplier=float(arg.split('=')[1])
     if arg.split('=')[0]=='input_size':
         input_size=int(arg.split('=')[1])
-
+    if arg.split('=')[0]=='id':
+        trial_id=arg.split('=')[1]
 
 print('###')
 print('PV is: '+pv)
@@ -57,7 +59,7 @@ if data == 'none':
     print('bias\ndac\ncurrent\ndrift')
 if data == 'bias':
     #BIAS
-    f = open(path+"/bias.csv","w")
+    f = open(path+"/bias."+trial_id+".csv","w")
     out='bias,rbv,measured'
     f.write(out+'\n')
     biases=np.arange(-10,11) #array from -10 to 10
@@ -81,7 +83,7 @@ if data == 'dac':
         print('please provide channel')
         sys.exit()
     #DAC
-    f = open(path+"/dac"+str(channel)+".csv","w")
+    f = open(path+"/dac"+str(channel)+"."+trial_id+".csv","w")
     out='set,measured'
     f.write(out+'\n')
     dacs=np.arange(-10,11) #array from -10 to 10
@@ -140,7 +142,7 @@ if data == 'current':
     #f = open(path+"Serial#6_ver2/current"+str(channel)+".csv","w")
     out='Input (A), range (micro A), range_rbv, mean, std, start/end\n'
 
-    with open(path+"/"+str(int(AVE_TIME*1000))+"ms_current"+str(CHANNEL)+".csv","w") as f:
+    with open(path+"/"+str(int(AVE_TIME*1000))+"ms_current"+str(CHANNEL)+"."+trial_id+".csv","w") as f:
 
         for i in range(len(RANGE_VALUES)):
             inputs=[] #in amps
@@ -193,7 +195,7 @@ if data == 'drift':
 
     pro.write('sens:volt:rang:auto 1',27)
 
-    with open(path+"/drift.csv","w") as f:
+    with open(path+"/drift."+trial_id+".csv","w") as f:
         f.write(out+'\n')
         while time_now < max_time:
             for i in range(len(range_values)):
