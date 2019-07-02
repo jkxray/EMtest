@@ -14,7 +14,7 @@ port='/dev/ttyUSB6'
 data = 'none'
 channel = 'none'
 averaging_time = 'none'
-num_points = 'none'
+num_points = 100
 input_size = 15
 saturation_multiplier=1.2
 for arg in sys.argv:
@@ -66,18 +66,18 @@ if data == 'bias':
             value_measured=pro.readline()
             value_RBV=EpicsSignal(pv+'BiasVoltage_RBV').get()
             out=str(bias)+', '+str(value_RBV)+', '+value_measured.split(',')[0].split('N')[0]
+            print(out)
             f.write(out+'\n')
     f.close()
     print('Finished')
 
 if data == 'dac':
     print('###')
-    print('channel is '+channel)
+    print('channel is '+str(channel))
     if channel=='none':
         print('please provide channel')
         sys.exit()
     #DAC
-    channel=3
     f = open(path+"/dac"+str(channel)+".csv","w")
     out='set,measured'
     f.write(out+'\n')
@@ -89,6 +89,7 @@ if data == 'dac':
             pro.write("meas:volt:dc?",27)
             value_measured=pro.readline()
             out=str(dac)+', '+value_measured.split(',')[0].split('N')[0]
+            print(out)
             f.write(out+'\n')
         EpicsSignal(pv+'DAC'+str(channel)).put(0)
     f.close()
@@ -97,8 +98,8 @@ if data == 'dac':
 
 if data == 'current':
     print('###')
-    print('channel is '+channel)
-    print('averaging time is '+averaging_time)
+    print('channel is '+str(channel))
+    print('averaging time is '+str(averaging_time))
 
     if channel=='none':
         print('please provide channel')
@@ -107,8 +108,7 @@ if data == 'current':
         print('please provide averaging_time')
         sys.exit()
     #CURRENT
-    CHANNEL=3
-
+    CHANNEL=channel
     RANGE_VALUES=[1,10,100,1e3,50e3] #in micro amps (1e-6A)
     inputs=[] #in amps
     pro.write("output ON",12)
@@ -142,10 +142,11 @@ if data == 'current':
         for i in range(len(RANGE_VALUES)):
             inputs=[] #in amps
             for j in range(INPUTS_SIZE):
-                inputs.append(range_values[i]*SATURATION_MULTIPLIER*j/(INPUTS_SIZE*1e6))
+                inputs.append(RANGE_VALUES[i]*SATURATION_MULTIPLIER*j/(INPUTS_SIZE*1e6))
             #print(inputs)
 
             for j in range(INPUTS_SIZE):
+                print("range: "+str(i)+" input: "+str(inputs[j]))
                 EpicsSignal(pv+'Range').put(i)
                 input_sci = '%.2E' % Decimal(str(inputs[j]))
                 pro.write("sour:curr:ampl "+input_sci,12)
@@ -159,7 +160,7 @@ if data == 'current':
                 out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
                 for current in currentArr:
                     out+=str(current)+'\n'
-                out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'
+                out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'                
                 f.write(out)
     pro.write("syst:beep:stat on",12)
     pro.write("sour:curr:rang:auto off",12)
