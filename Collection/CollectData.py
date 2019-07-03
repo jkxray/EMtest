@@ -217,7 +217,7 @@ if data == 'drift':
                 for i in range(1):
                     currentArr.append([])
                 def collect(id):
-                    while time.time() < time_init+span*counter:
+                    while time.time() < start_time+span:
                         if id==0:
                             pro.write("meas:volt:dc?",13)
                             value_measured_orig=pro.readline()
