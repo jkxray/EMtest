@@ -180,7 +180,7 @@ if data == 'drift':
 
     range_values=[1] #in micro amps (1e-6A)
     interval=60*5 #5min between each measurement
-    max_time=3600*48 # run for 48 hours
+    max_time=3600*24 # run for 48 hours
 
     time_init=time.time()
     time_now=0
@@ -190,9 +190,9 @@ if data == 'drift':
     EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
     EpicsSignal(pv+'CalibrationMode').put(0)
 
-    EpicsSignal(pv+'AveragingTime').put(1e-3)
+    EpicsSignal(pv+'AveragingTime').put(100e-3)
     EpicsSignal(pv+'TS:TSAveragingTime').put(100e-3)
-    EpicsSignal(pv+'TS:TSNumPoints').put(100)
+    EpicsSignal(pv+'TS:TSNumPoints').put(1)
 
     pro.write('sens:volt:rang:auto 1',13)
 
@@ -203,17 +203,19 @@ if data == 'drift':
                 EpicsSignal(pv+'Range').put(i)
                 range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
                 time_delta=time.time()-time_now-time_init
-                time.sleep((interval/len(range_values))-time_delta)
+                #time.sleep((interval/len(range_values))-time_delta)
                 time_now=time.time()-time_init
                 volts=[]
-                for j in range(100):
+                for j in range(50):
                     pro.write("meas:volt:dc?",13)
                     value_measured=pro.readline()
                     value_measured=value_measured.split(',')[0].split('N')[0]
-                    print(value_measured)
+                    #CATCH ERRROR HERE
                     volts.append(float(value_measured))
+                print(time.time()-time_now-time_init)
+                sys.exit()
                 for channel in range(4):
-                    currentArr=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value
+                    currentArr.append(EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value[0])
                     out=str(channel)+','+str(time_now)+','+str(np.average(volts))+','+str(np.std(volts))+','+str(range_values[i])+','+str(range_values[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr))
                     f.write(out+'\n')
     print('Finished')
