@@ -193,6 +193,8 @@ if data == 'drift':
     EpicsSignal(pv+'TS:TSAveragingTime').put(100e-3)
     EpicsSignal(pv+'TS:TSNumPoints').put(1)
 
+    EpicsSignal(pv+'TS:TSAcquireMode').put(0) #sets to circular buffer
+
     EpicsSignal(pv+'Range').put(0)
 
     pro.write('sens:volt:rang:auto 1',13)
@@ -202,6 +204,7 @@ if data == 'drift':
         counter = 1
         time_init=time.time()
         while time.time() < time_init+max_time:
+
             volts=[]
             currentArr=[]
             start_time=0
@@ -219,13 +222,18 @@ if data == 'drift':
                         except:
                             print(value_measured_orig+'.split(\',\')[0].split(\'N\')[0] cannot be converted into a float')
                     if id==1:
-                        for channel in range(4):
-                            curr_str=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries').value
-                            print(str(channel)+' '+str(curr_str))
-                            currentArr[channel].append(curr_str[0])
+                        isAquiring = EpicsSignal(pv+'TS:TSAcquiring').get()
+                        if isAquiring == 0: #if it's done acquiring
+                            for channel in range(4): #collect data for each channel
+                                curr_str=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries').value
+                                #print(str(channel)+' '+str(curr_str))
+                                currentArr[channel].append(curr_str[0])
+                            EpicsSignal(pv+'TS:TSAcquire').put(1) #acquire new data
+                    time.sleep(10e-3) #check back every 10ms
+
             volt_thread = threading.Thread(target=collect, args=(0,))
             current_thread = threading.Thread(target=collect, args=(1,))
-
+            EpicsSignal(pv+'TS:TSAcquire').put(1) #acquire new data
             start_time=time.time()
             # starting thread 1
             volt_thread.start()
@@ -241,10 +249,11 @@ if data == 'drift':
             voltage_mean = np.average(volts)
             voltage_std = np.std(volts,ddof=1)
             voltage_num = len(volts)
-            current_mean = np.average(currentArr)
-            current_std = np.std(currentArr,ddof=1)
-            
+
+
             for channel in range(4):
+                current_mean = np.average(currentArr[channel])
+                current_std = np.std(currentArr[channel],ddof=1)
                 current_num=len(currentArr[channel])
                 out=str(channel)+','+str(start_time)+','+str(end_time)+','+str(voltage_mean)+','+str(voltage_std)+','+str(voltage_num)+','+str(current_mean)+','+str(current_std)+','+str(current_num)
                 print(out)
