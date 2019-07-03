@@ -263,5 +263,6 @@ if data == 'drift':
                     out=str(channel)+','+str(start_time)+','+str(end_time)+','+str(voltage_mean)+','+str(voltage_std)+','+str(voltage_num)+','+str(current_mean)+','+str(current_std)+','+str(current_num)
                     print(out)
                     f.write(out+'\n')
+                f.flush()
 
     print('Finished')
