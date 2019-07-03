@@ -199,7 +199,8 @@ if data == 'drift':
 
     with open(path+"/drift."+trial_id+".csv","w") as f:
         f.write(out+'\n')
-        counter = 0
+        counter = 1
+        time_init=time.time()
         while time.time() < time_init+max_time:
             volts=[]
             currentArr=[]
@@ -219,9 +220,11 @@ if data == 'drift':
                             print(value_measured_orig+'.split(\',\')[0].split(\'N\')[0] cannot be converted into a float')
                     if id==1:
                         for channel in range(4):
-                            currentArr[channel].append(EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value[0])
-            volt_thread = threading.Thread(target=collect, args=(0))
-            current_thread = threading.Thread(target=collect, args=(1))
+                            curr_str=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries').value
+                            print(str(channel)+' '+str(curr_str))
+                            currentArr[channel].append(curr_str[0])
+            volt_thread = threading.Thread(target=collect, args=(0,))
+            current_thread = threading.Thread(target=collect, args=(1,))
 
             start_time=time.time()
             # starting thread 1
@@ -240,8 +243,9 @@ if data == 'drift':
             voltage_num = len(volts)
             current_mean = np.average(currentArr)
             current_std = np.std(currentArr,ddof=1)
-            current_num = len(currentArr)
+            
             for channel in range(4):
+                current_num=len(currentArr[channel])
                 out=str(channel)+','+str(start_time)+','+str(end_time)+','+str(voltage_mean)+','+str(voltage_std)+','+str(voltage_num)+','+str(current_mean)+','+str(current_std)+','+str(current_num)
                 print(out)
                 f.write(out+'\n')
