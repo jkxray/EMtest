@@ -206,7 +206,6 @@ if data == 'drift':
         time_init=time.time()
         target_time = time_init+counter*interval
         while time.time() < time_init+max_time:
-            time.sleep(1e-3) #check back every 5ms
             if time.time() > target_time:
                 counter+=1
                 target_time = time_init+counter*interval
@@ -234,7 +233,6 @@ if data == 'drift':
                                     #print(str(channel)+' '+str(curr_str))
                                     currentArr[channel].append(curr_str[0])
                                 EpicsSignal(pv+'TS:TSAcquire').put(1) #acquire new data
-                        time.sleep(5e-3) #check back every 5ms
 
                 volt_thread = threading.Thread(target=collect, args=(0,))
                 current_thread = threading.Thread(target=collect, args=(1,))
