@@ -209,7 +209,7 @@ if data == 'drift':
             currentArr=[]
             start_time=0
             end_time=0
-            for i in range(4):
+            for i in range(1):
                 currentArr.append([])
             def collect(id):
                 while time.time() < time_init+span*counter:
@@ -224,7 +224,7 @@ if data == 'drift':
                     if id==1:
                         isAquiring = EpicsSignal(pv+'TS:TSAcquiring').get()
                         if isAquiring == 0: #if it's done acquiring
-                            for channel in range(4): #collect data for each channel
+                            for channel in range(1): #collect data for each channel
                                 curr_str=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries').value
                                 #print(str(channel)+' '+str(curr_str))
                                 currentArr[channel].append(curr_str[0])
@@ -251,7 +251,7 @@ if data == 'drift':
             voltage_num = len(volts)
 
 
-            for channel in range(4):
+            for channel in range(1):
                 current_mean = np.average(currentArr[channel])
                 current_std = np.std(currentArr[channel],ddof=1)
                 current_num=len(currentArr[channel])
