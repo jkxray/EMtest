@@ -5,6 +5,7 @@ import time
 from decimal import Decimal
 import os
 import sys
+import threading
 sys.path.append('../')
 from Prologix import Prologix
 
@@ -166,7 +167,7 @@ if data == 'current':
                 out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
                 for current in currentArr:
                     out+=str(current)+'\n'
-                out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'                
+                out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'
                 f.write(out)
     pro.write("syst:beep:stat on",12)
     pro.write("sour:curr:rang:auto off",12)
@@ -177,14 +178,12 @@ if data == 'current':
 
 if data == 'drift':
     #DRIFT
-
-    range_values=[1] #in micro amps (1e-6A)
     interval=60*5 #5min between each measurement
-    max_time=3600*24 # run for 48 hours
+    span=25 #time span to take data
+    max_time=3600*24 # run for 24 hours
 
     time_init=time.time()
-    time_now=0
-    out='channel, time (s), temperature_voltage mean, temp_voltage std, range (micro A), range_rbv, mean, std'
+    out='channel, start time(s), end time (s), voltage mean, voltage std, voltage num, current mean, current std, current num'
 
     EpicsSignal(pv+'CalibrationMode').put(1)
     EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
@@ -194,28 +193,58 @@ if data == 'drift':
     EpicsSignal(pv+'TS:TSAveragingTime').put(100e-3)
     EpicsSignal(pv+'TS:TSNumPoints').put(1)
 
+    EpicsSignal(pv+'Range').put(0)
+
     pro.write('sens:volt:rang:auto 1',13)
 
     with open(path+"/drift."+trial_id+".csv","w") as f:
         f.write(out+'\n')
-        while time_now < max_time:
-            for i in range(len(range_values)):
-                EpicsSignal(pv+'Range').put(i)
-                range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
-                time_delta=time.time()-time_now-time_init
-                #time.sleep((interval/len(range_values))-time_delta)
-                time_now=time.time()-time_init
-                volts=[]
-                for j in range(50):
-                    pro.write("meas:volt:dc?",13)
-                    value_measured=pro.readline()
-                    value_measured=value_measured.split(',')[0].split('N')[0]
-                    #CATCH ERRROR HERE
-                    volts.append(float(value_measured))
-                print(time.time()-time_now-time_init)
-                sys.exit()
-                for channel in range(4):
-                    currentArr.append(EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value[0])
-                    out=str(channel)+','+str(time_now)+','+str(np.average(volts))+','+str(np.std(volts))+','+str(range_values[i])+','+str(range_values[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr))
-                    f.write(out+'\n')
+        counter = 0
+        while time.time() < time_init+max_time:
+            volts=[]
+            currentArr=[]
+            start_time=0
+            end_time=0
+            for i in range(4):
+                currentArr.append([])
+            def collect(id):
+                while time.time() < time_init+span*counter:
+                    if id==0:
+                        pro.write("meas:volt:dc?",13)
+                        value_measured_orig=pro.readline()
+                        value_measured=value_measured_orig.split(',')[0].split('N')[0]
+                        try:
+                            volts.append(float(value_measured))
+                        except:
+                            print(value_measured_orig+'.split(\',\')[0].split(\'N\')[0] cannot be converted into a float')
+                    if id==1:
+                        for channel in range(4):
+                            currentArr[channel].append(EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value[0])
+            volt_thread = threading.Thread(target=collect, args=(0))
+            current_thread = threading.Thread(target=collect, args=(1))
+
+            start_time=time.time()
+            # starting thread 1
+            volt_thread.start()
+            # starting thread 2
+            current_thread.start()
+
+            # wait until thread 1 is completely executed
+            volt_thread.join()
+            # wait until thread 2 is completely executed
+            current_thread.join()
+            end_time=time.time()
+
+            voltage_mean = np.average(volts)
+            voltage_std = np.std(volts,ddof=1)
+            voltage_num = len(volts)
+            current_mean = np.average(currentArr)
+            current_std = np.std(currentArr,ddof=1)
+            current_num = len(currentArr)
+            for channel in range(4):
+                out=str(channel)+','+str(start_time)+','+str(end_time)+','+str(voltage_mean)+','+str(voltage_std)+','+str(voltage_num)+','+str(current_mean)+','+str(current_std)+','+str(current_num)
+                print(out)
+                f.write(out+'\n')
+
+            counter+=1
     print('Finished')
