@@ -39,7 +39,7 @@ for arg in sys.argv:
         saturation_multiplier=float(arg.split('=')[1])
     if arg.split('=')[0]=='input_size':
         input_size=int(arg.split('=')[1])
-    if arg.split('=')[0]=='id':
+    if arg.split('=')[0]=='trial_id':
         trial_id=arg.split('=')[1]
 
 print('###')
@@ -51,6 +51,7 @@ EpicsSignal(pv+'Acquire').put(1) #sets mode to acquire
 EpicsSignal(pv+'TS:TSAcquireMode').put(1) #sets to circular buffer
 EpicsSignal(pv+'ValuesPerRead').put(50) #sets values per read to 50
 EpicsSignal(pv+'AcquireMode').put(0) #sets acquire mode to continuous
+EpicsSignal(pv+'TS:TSAcquire').put(1) #start acquiring
 pro = Prologix(port)
 
 if data == 'none':
@@ -151,7 +152,7 @@ if data == 'current':
             #print(inputs)
 
             for j in range(INPUTS_SIZE):
-                print("range: "+str(i)+" input: "+str(inputs[j]))
+                print("range: "+str(RANGE_VALUES[i])+" input: "+str(inputs[j]*1e6))
                 EpicsSignal(pv+'Range').put(i)
                 input_sci = '%.2E' % Decimal(str(inputs[j]))
                 pro.write("sour:curr:ampl "+input_sci,12)
@@ -193,7 +194,7 @@ if data == 'drift':
     EpicsSignal(pv+'TS:TSAveragingTime').put(100e-3)
     EpicsSignal(pv+'TS:TSNumPoints').put(100)
 
-    pro.write('sens:volt:rang:auto 1',27)
+    pro.write('sens:volt:rang:auto 1',13)
 
     with open(path+"/drift."+trial_id+".csv","w") as f:
         f.write(out+'\n')
@@ -205,10 +206,11 @@ if data == 'drift':
                 time.sleep((interval/len(range_values))-time_delta)
                 time_now=time.time()-time_init
                 volts=[]
-                for j in range(5):
-                    pro.write("meas:volt:dc?",27)
+                for j in range(100):
+                    pro.write("meas:volt:dc?",13)
                     value_measured=pro.readline()
                     value_measured=value_measured.split(',')[0].split('N')[0]
+                    print(value_measured)
                     volts.append(float(value_measured))
                 for channel in range(4):
                     currentArr=EpicsSignal(pv+'TS:Current'+str(channel+1)+':TimeSeries',name='TS').value
