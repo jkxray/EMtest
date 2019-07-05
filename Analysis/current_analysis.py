@@ -7,7 +7,7 @@ import math
 from format import sci_not
 
 
-path = '../Tests/Serial6_ver3/'
+path = '../Tests/Serial102/'
 #CURRENT
 range_values=[1,10,100,1000,50e3]
 #range_values=[1]
@@ -24,7 +24,7 @@ for range_value in range_values:
         dyo=[]
         markers= [',', 'x', '+', 'v','^', '<', '>', 's', 'd']
         line=0
-        with open(path+'data/'+ave_time+'ms_current'+str(channel)+'.csv','r') as csvfile:
+        with open(path+'data/'+ave_time+'ms_current'+str(channel)+'.1.csv','r') as csvfile:
             plots = csv.reader(csvfile, delimiter=',')
             next(csvfile)
             line+=1
@@ -78,4 +78,5 @@ for range_value in range_values:
     plt.xlabel('Input (\u03bcA)')
     plt.ylabel('Measurement (\u03bcA)')
     plt.title('Ave. Time '+ave_time+'ms, '+'Range '+str(int(range_value)))
+    #plt.show()
     plt.savefig(path+'plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')
