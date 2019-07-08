@@ -19,9 +19,11 @@ num_points = 100
 input_size = 15
 saturation_multiplier=1.2
 trial_id='0'
+help_flag=False
 for arg in sys.argv:
     if arg.split('=')[0]=='help':
-        print('Available parameters are:\npv: PV for electrometer under test.\npath: path to save csv files.\nprologix-port: Port path for prologix adapter ("/dev/???")\ndata: Data types.')
+        print('Available parameters are:\npv: PV for electrometer under test. Default is set to '+pv+'\npath: path to save csv files.\nprologix-port: Port path for prologix adapter /dev/???. Default is set to '+port+'\ndata: Data types.')
+        help_flag=True
     if arg.split('=')[0]=='pv':
         pv=arg.split('=')[1]
     if arg.split('=')[0]=='path':
@@ -42,23 +44,38 @@ for arg in sys.argv:
         input_size=int(arg.split('=')[1])
     if arg.split('=')[0]=='trial_id':
         trial_id=arg.split('=')[1]
-
-print('###')
-print('PV is: '+pv)
-print('Data will be saved to: '+path)
-print('Port for prologix adapter is: '+port)
-print('Data type is: '+data)
-EpicsSignal(pv+'Acquire').put(1) #sets mode to acquire
-EpicsSignal(pv+'TS:TSAcquireMode').put(1) #sets to circular buffer
-EpicsSignal(pv+'ValuesPerRead').put(50) #sets values per read to 50
-EpicsSignal(pv+'AcquireMode').put(0) #sets acquire mode to continuous
-EpicsSignal(pv+'TS:TSAcquire').put(1) #start acquiring
-pro = Prologix(port)
-
-if data == 'none':
+if help_flag==False:
     print('###')
-    print('Please provide data type in the parameters by \'data=TYPE\'\nThe available TYPES are:')
-    print('bias\ndac\ncurrent\ndrift')
+    print('PV is: '+pv)
+    print('Data will be saved to: '+path)
+    print('Port for prologix adapter is: '+port)
+    print('Data type is: '+data)
+    EpicsSignal(pv+'Acquire').put(1) #sets mode to acquire
+    EpicsSignal(pv+'TS:TSAcquireMode').put(1) #sets to circular buffer
+    EpicsSignal(pv+'ValuesPerRead').put(50) #sets values per read to 50
+    EpicsSignal(pv+'AcquireMode').put(0) #sets acquire mode to continuous
+    EpicsSignal(pv+'TS:TSAcquire').put(1) #start acquiring
+    pro = Prologix(port)
+
+
+    if data == 'none':
+        print('###')
+        print('Please provide data type in the parameters by \'data=TYPE\'\nThe available TYPES are:')
+        print('bias\ndac\ncurrent\ndrift\noffset')
+if data == 'calibrate':
+    EpicsSignal(pv+'CalibrationMode').put(1)
+    EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
+    EpicsSignal(pv+'CalibrationMode').put(0)
+    print('ADC offsets are calibrated')
+
+if data == 'offset':
+    f=open(path+"/"+pv+"offsets.csv","w")
+    for i in range(4):
+        offset=EpicsSignal(pv+'ADCOffset'+str(i+1)).get()
+        f.write(str(offset))
+        print(offset)
+    f.close()
+    print('Finished')
 if data == 'bias':
     #BIAS
     f = open(path+"/bias."+trial_id+".csv","w")
@@ -132,6 +149,7 @@ if data == 'current':
 
     time_init=time.time()
     time_now=0
+
 
     EpicsSignal(pv+'CalibrationMode').put(1)
     EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
