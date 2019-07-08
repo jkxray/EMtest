@@ -12,7 +12,10 @@ type=0
 for arg in sys.argv:
     if arg.split('=')[0]=='type':
         type=int(arg.split('=')[1])
-
+    if arg.split('=')[0]=='path':
+        path=arg.split('=')[1]
+print('Path is set to '+path)
+ 
 ranges=[1]
 if type==0:
     fig=plt.figure()

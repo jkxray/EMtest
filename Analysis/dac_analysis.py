@@ -16,6 +16,11 @@ dy = []
 line=1
 measured_values=[]
 markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
+for arg in sys.argv:
+    if arg.split('=')[0]=='path':
+        path=arg.split('=')[1]
+print('Path is set to '+path)
+ 
 for channel in range(4):
     with open(path+'data/dac'+str(channel)+'.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')

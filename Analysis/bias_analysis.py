@@ -5,7 +5,7 @@ import csv
 from decimal import Decimal
 import math
 from format import sci_not
-path = '../Tests/Serial102/'
+path = '../data/Serial102/'
 #BIAS
 x = []
 y = []
@@ -13,7 +13,12 @@ dy = []
 line=1
 measured_values=[]
 markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
-with open(path+'data/bias.csv','r') as csvfile:
+for arg in sys.argv:
+    if arg.split('=')[0]=='path':
+        path=arg.split('=')[1]
+print('Path is set to '+path)
+ 
+with open(path+'bias.csv','r') as csvfile:
     plots = csv.reader(csvfile, delimiter=',')
     next(csvfile)
     for row in plots:
@@ -44,5 +49,5 @@ plt.xlabel('Set (V)')
 plt.ylabel('Measurement (V)')
 #plt.axis([-11, 11, -0.004, 0.003])
 plt.title('Bias Output')
-#plt.show()
-plt.savefig(path+'plot/bias.png')
+plt.show()
+#plt.savefig(path+'plot/bias.png')
