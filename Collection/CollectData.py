@@ -19,6 +19,7 @@ num_points = 100
 input_size = 15
 saturation_multiplier=1.2
 trial_id='0'
+values_per_read=50
 help_flag=False
 for arg in sys.argv:
     if arg.split('=')[0]=='help':
@@ -44,6 +45,8 @@ for arg in sys.argv:
         input_size=int(arg.split('=')[1])
     if arg.split('=')[0]=='trial_id':
         trial_id=arg.split('=')[1]
+    if arg.split('=')[0]=='values_per_read':
+        values_per_read=arg.split('=')[1]
 if help_flag==False:
     print('###')
     print('PV is: '+pv)
@@ -52,7 +55,7 @@ if help_flag==False:
     print('Data type is: '+data)
     EpicsSignal(pv+'Acquire').put(1) #sets mode to acquire
     EpicsSignal(pv+'TS:TSAcquireMode').put(1) #sets to circular buffer
-    EpicsSignal(pv+'ValuesPerRead').put(50) #sets values per read to 50
+    EpicsSignal(pv+'ValuesPerRead').put(values_per_read) #sets values per read to 50
     EpicsSignal(pv+'AcquireMode').put(0) #sets acquire mode to continuous
     EpicsSignal(pv+'TS:TSAcquire').put(1) #start acquiring
     pro = Prologix(port)
