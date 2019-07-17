@@ -78,5 +78,5 @@ for range_value in range_values:
     plt.xlabel('Input (\u03bcA)')
     plt.ylabel('Measurement (\u03bcA)')
     plt.title('Ave. Time '+ave_time+'ms, '+'Range '+str(int(range_value)))
-    #plt.show()
-    plt.savefig(path+'plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')
+    plt.show()
+    #plt.savefig(path+'plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')

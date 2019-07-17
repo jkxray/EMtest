@@ -60,5 +60,5 @@ if type==1:
     plt.scatter(v,i,c=colors,cmap='inferno',s=10)
 plt.legend()
 plt.title('Temperature and Current Drift')
-#plt.show()
-plt.savefig(path+'plot/'+'drift'+str(type)+'.png')
+plt.show()
+#plt.savefig(path+'plot/'+'drift'+str(type)+'.png')
