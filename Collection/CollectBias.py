@@ -20,7 +20,7 @@ def bias():
     for bias in biases:
         for i in range(3):
             EpicsSignal(pv+'BiasVoltage').put(bias)
-            #time.sleep(0.05)
+            time.sleep(0.1)
             pro.write("meas:volt:dc?",27)
             value_measured=pro.readline()
             value_RBV=EpicsSignal(pv+'BiasVoltage_RBV').get()

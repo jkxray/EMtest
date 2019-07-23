@@ -43,23 +43,22 @@ def current():
   time_now=0
 
 
-  EpicsSignal(pv+'CalibrationMode').put(1)
-  EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
-  EpicsSignal(pv+'CalibrationMode').put(0)
-
   EpicsSignal(pv+'AveragingTime').put(AVE_TIME)
+  time.sleep(0.5)
   EpicsSignal(pv+'TS:TSAveragingTime').put(AVE_TIME)
+  time.sleep(0.5)
   EpicsSignal(pv+'TS:TSNumPoints').put(NUM_POINTS)
-
+  time.sleep(0.5)
   #f = open(path+"Serial#6_ver2/current"+str(channel)+".csv","w")
   out='Input (A), range (micro A), range_rbv, mean, std, start/end\n'
 
   with open(path+"/"+str(int(AVE_TIME*1000))+"ms_current"+str(CHANNEL)+"."+trial_id+".csv","w") as f:
-
+      f.write(out)
       for i in range(len(RANGE_VALUES)):
           inputs=[] #in amps
-          for j in range(INPUTS_SIZE):
-              inputs.append(RANGE_VALUES[i]*SATURATION_MULTIPLIER*j/(INPUTS_SIZE*1e6))
+          for j in range(INPUTS_SIZE+1):
+              input = RANGE_VALUES[i]*SATURATION_MULTIPLIER*j/(INPUTS_SIZE*1e6)
+              inputs.append(input)
           #print(inputs)
 
           for j in range(INPUTS_SIZE):
@@ -74,10 +73,12 @@ def current():
 
               currentArr=EpicsSignal(pv+'TS:Current'+str(CHANNEL+1)+':TimeSeries',name='TS').value
               range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
-              out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
+              out=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
+
               for current in currentArr:
                   out+=str(current)+'\n'
               out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'
+              print(out)
               f.write(out)
   pro.write("syst:beep:stat on",12)
   pro.write("sour:curr:rang:auto off",12)

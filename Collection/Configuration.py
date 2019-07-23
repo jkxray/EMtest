@@ -13,10 +13,10 @@ path='../data/'
 port='/dev/ttyUSB1'
 data = 'none'
 channel = 'none'
-averaging_time = 'none'
+averaging_time = 'none' #in seconds
 num_points = 100
 input_size = 15
-saturation_multiplier=1.2
+saturation_multiplier=1.1
 trial_id='0'
 values_per_read=50
 help_flag=False
@@ -70,3 +70,4 @@ if help_flag==False:
         print('###')
         print('Please provide data type in the parameters by \'data=TYPE\'\nThe available TYPES are:')
         print('bias\ndac\ncurrent\ndrift\noffset')
+print("Configuration finished.")

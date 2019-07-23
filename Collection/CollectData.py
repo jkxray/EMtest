@@ -23,6 +23,7 @@ if data == 'dac':
     CollectDAC.dac()
 
 if data == 'current':
+    print('Collecting current.')
     CollectCurrent.current()
 
 if data == 'drift':
