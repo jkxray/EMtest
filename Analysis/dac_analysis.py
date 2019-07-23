@@ -5,9 +5,9 @@ import csv
 from decimal import Decimal
 import math
 from format import sci_not
+import sys
 
-
-path = '../Tests/Serial102/'
+path = '../data'
 
 #DAC
 x = []
@@ -20,9 +20,9 @@ for arg in sys.argv:
     if arg.split('=')[0]=='path':
         path=arg.split('=')[1]
 print('Path is set to '+path)
- 
+
 for channel in range(4):
-    with open(path+'data/dac'+str(channel)+'.csv','r') as csvfile:
+    with open(path+'/dac'+str(channel)+'.1.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         next(csvfile)
         for row in plots:
@@ -57,5 +57,5 @@ plt.xlabel('Set (V)')
 plt.ylabel('Measurement (V)')
 #plt.axis([-11, 11, -0.004, 0.003])
 plt.title('DAC Output')
-#plt.show()
-plt.savefig(path+'plot/dac.png')
+plt.show()
+#plt.savefig(path+'plot/dac.png')

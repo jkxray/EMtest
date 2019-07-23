@@ -5,19 +5,19 @@ import csv
 from decimal import Decimal
 import math
 from format import sci_not
+import sys
 
-
-path = '../Tests/Serial102/'
+path = '../data'
 #CURRENT
 range_values=[1,10,100,1000,50e3]
 #range_values=[1]
-ave_time='100'
+ave_time='1'
 num_points=15
 for arg in sys.argv:
     if arg.split('=')[0]=='path':
         path=arg.split('=')[1]
 print('Path is set to '+path)
- 
+
 for range_value in range_values:
     plt.close()
     for channel in range(4):
@@ -29,7 +29,7 @@ for range_value in range_values:
         dyo=[]
         markers= [',', 'x', '+', 'v','^', '<', '>', 's', 'd']
         line=0
-        with open(path+'data/'+ave_time+'ms_current'+str(channel)+'.1.csv','r') as csvfile:
+        with open(path+'/'+ave_time+'ms_current'+str(channel)+'.3.csv','r') as csvfile:
             plots = csv.reader(csvfile, delimiter=',')
             next(csvfile)
             line+=1
