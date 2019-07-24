@@ -53,5 +53,11 @@ def dac():
     plt.ylabel('Measurement (V)')
     #plt.axis([-11, 11, -0.004, 0.003])
     plt.title('DAC Output')
-    plt.show()
-    #plt.savefig(path+'plot/dac.png')
+    if show_plot='y':
+        plt.show()
+    elif show_plot='n':
+        print('Not showing plot')
+    if save_plot='y':
+        plt.savefig(path+'/plot/dac.png')
+    elif save_plot='n':
+        print('not saving plot')

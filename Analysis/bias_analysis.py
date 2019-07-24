@@ -46,5 +46,12 @@ def bias():
     plt.ylabel('Measurement (V)')
     #plt.axis([-11, 11, -0.004, 0.003])
     plt.title('Bias Output')
-    plt.show()
-    #plt.savefig(path+'plot/bias.png')
+
+    if show_plot='y':
+        plt.show()
+    elif show_plot='n':
+        print('Not showing plot')
+    if save_plot='y':
+        plt.savefig(path+'/plot/bias.png')
+    elif save_plot='n':
+        print('not saving plot')

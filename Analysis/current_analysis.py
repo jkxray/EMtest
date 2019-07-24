@@ -77,5 +77,11 @@ def current():
         plt.xlabel('Input (\u03bcA)')
         plt.ylabel('Measurement (\u03bcA)')
         plt.title('Ave. Time '+ave_time+'ms, '+'Range '+str(int(range_value)))
-        plt.show()
-        #plt.savefig(path+'plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')
+        if show_plot='y':
+            plt.show()
+        elif show_plot='n':
+            print('Not showing plot')
+        if save_plot='y':
+            plt.savefig(path+'/plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')
+        elif save_plot='n':
+            print('not saving plot')
