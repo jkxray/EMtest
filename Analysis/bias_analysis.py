@@ -15,7 +15,7 @@ def bias():
     measured_values=[]
     markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
 
-    with open(path+'/bias.'+trial_id+'.csv','r') as csvfile:
+    with open(path+'/data/bias.'+trial_id+'.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         next(csvfile)
         for row in plots:
@@ -47,11 +47,11 @@ def bias():
     #plt.axis([-11, 11, -0.004, 0.003])
     plt.title('Bias Output')
 
-    if show_plot='y':
+    if show_plot=='y':
         plt.show()
-    elif show_plot='n':
-        print('Not showing plot')
-    if save_plot='y':
+    if save_plot=='y':
         plt.savefig(path+'/plot/bias.png')
-    elif save_plot='n':
+    if show_plot=='n':
+        print('Not showing plot')
+    if save_plot=='n':
         print('not saving plot')

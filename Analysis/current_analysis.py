@@ -23,7 +23,7 @@ def current():
             dyo=[]
             markers= [',', 'x', '+', 'v','^', '<', '>', 's', 'd']
             line=0
-            with open(path+'/'+ave_time+'ms_current'+str(channel)+'.'+trial_id+'.csv','r') as csvfile:
+            with open(path+'/data/'+ave_time+'ms_current'+str(channel)+'.'+trial_id+'.csv','r') as csvfile:
                 plots = csv.reader(csvfile, delimiter=',')
                 next(csvfile)
                 line+=1
@@ -77,11 +77,13 @@ def current():
         plt.xlabel('Input (\u03bcA)')
         plt.ylabel('Measurement (\u03bcA)')
         plt.title('Ave. Time '+ave_time+'ms, '+'Range '+str(int(range_value)))
-        if show_plot='y':
+        if show_plot=='y':
             plt.show()
-        elif show_plot='n':
-            print('Not showing plot')
-        if save_plot='y':
+
+        if save_plot=='y':
             plt.savefig(path+'/plot/'+ave_time+'ms_range'+str(int(range_value))+'.png')
-        elif save_plot='n':
-            print('not saving plot')
+
+    if show_plot=='n':
+        print('Not showing plot')
+    if save_plot=='n':
+        print('not saving plot')
