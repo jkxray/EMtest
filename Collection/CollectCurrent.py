@@ -38,17 +38,18 @@ def current():
   wait_time=AVE_TIME*NUM_POINTS+5
   print('The interval between each measurement is '+str(wait_time)+' seconds.')
   print('Will approximately take '+str((INPUTS_SIZE*wait_time*len(RANGE_VALUES))/60)+' minutes to complete.')
-
+  print('---------------------------------------')
   time_init=time.time()
   time_now=0
 
 
   EpicsSignal(pv+'AveragingTime').put(AVE_TIME)
-  time.sleep(0.5)
+  time.sleep(1)
   EpicsSignal(pv+'TS:TSAveragingTime').put(AVE_TIME)
-  time.sleep(0.5)
+  time.sleep(1)
   EpicsSignal(pv+'TS:TSNumPoints').put(NUM_POINTS)
-  time.sleep(0.5)
+  time.sleep(1)
+  #sys.exit()
   #f = open(path+"Serial#6_ver2/current"+str(channel)+".csv","w")
   out='Input (A), range (micro A), range_rbv, mean, std, start/end\n'
 
@@ -62,7 +63,7 @@ def current():
           #print(inputs)
 
           for j in range(INPUTS_SIZE):
-              print("range: "+str(RANGE_VALUES[i])+" input: "+str(inputs[j]*1e6))
+
               EpicsSignal(pv+'Range').put(i)
               input_sci = '%.2E' % Decimal(str(inputs[j]))
               pro.write("sour:curr:ampl "+input_sci,12)
@@ -74,11 +75,11 @@ def current():
               currentArr=EpicsSignal(pv+'TS:Current'+str(CHANNEL+1)+':TimeSeries',name='TS').value
               range_rbv=int(EpicsSignal(pv+'Range_RBV').value)
               out=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',start\n'
-
+              print("range: "+str(RANGE_VALUES[i])+" input: "+str(inputs[j]*1e6)+" measured: "+str(np.average(currentArr)))
               for current in currentArr:
                   out+=str(current)+'\n'
               out+=str(inputs[j])+','+str(RANGE_VALUES[i])+','+str(RANGE_VALUES[range_rbv])+','+str(np.average(currentArr))+','+str(np.std(currentArr,ddof=1))+',end\n'
-              print(out)
+              #print(out)
               f.write(out)
   pro.write("syst:beep:stat on",12)
   pro.write("sour:curr:rang:auto off",12)

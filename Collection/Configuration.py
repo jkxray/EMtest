@@ -8,8 +8,9 @@ import threading
 sys.path.append('../')
 from Prologix import Prologix
 
-pv = 'XF:03ID-BI{EM:BPM1}'
-path='../data/'
+#pv = 'XF:03ID-BI{EM:BPM1}'
+pv = 'XF:12IDA-BI:2{EM:BPM1}'
+path='../data/005'
 port='/dev/ttyUSB1'
 data = 'none'
 channel = 'none'

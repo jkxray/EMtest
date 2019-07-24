@@ -16,15 +16,15 @@ import CollectBias
 import CollectCurrent
 if data == 'calibrate':
     Calibrate.calibrate()
-if data == 'bias':
+elif data == 'bias':
     CollectBias.bias()
 
-if data == 'dac':
+elif data == 'dac':
     CollectDAC.dac()
 
-if data == 'current':
+elif data == 'current':
     print('Collecting current.')
     CollectCurrent.current()
 
-if data == 'drift':
+else:
     print("Not supported.")
