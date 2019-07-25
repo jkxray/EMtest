@@ -53,7 +53,7 @@ def current():
   #f = open(path+"Serial#6_ver2/current"+str(channel)+".csv","w")
   out='Input (A), range (micro A), range_rbv, mean, std, start/end\n'
 
-  with open(path+"/"+str(int(AVE_TIME*1000))+"ms_current"+str(CHANNEL)+"."+trial_id+".csv","w") as f:
+  with open(path+"/"+str(int(AVE_TIME*1000))+"ms_current"+str(CHANNEL)+".csv","w") as f:
       f.write(out)
       for i in range(len(RANGE_VALUES)):
           inputs=[] #in amps

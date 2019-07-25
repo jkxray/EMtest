@@ -13,7 +13,7 @@ from Configuration import *
 
 def bias():
   #BIAS
-    f = open(path+"/bias."+trial_id+".csv","w")
+    f = open(path+"/bias.csv","w")
     out='bias,rbv,measured'
     f.write(out+'\n')
     biases=np.arange(-10,11) #array from -10 to 10

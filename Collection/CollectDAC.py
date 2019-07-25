@@ -17,7 +17,7 @@ def dac():
       print('please provide channel')
       sys.exit()
   #DAC
-  f = open(path+"/dac"+str(channel)+"."+trial_id+".csv","w")
+  f = open(path+"/dac"+str(channel)+".csv","w")
   out='set,measured'
   f.write(out+'\n')
   dacs=np.arange(-10,11) #array from -10 to 10
