@@ -269,3 +269,7 @@ def main():
 
     \end{document}
     '''
+
+    f = open(data_path+"../Unit"+serial_number+"_report.tex","w")
+    f.write(document)
+    f.close()
