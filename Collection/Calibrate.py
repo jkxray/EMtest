@@ -17,7 +17,7 @@ def calibrate():
   EpicsSignal(pv+'CalibrationMode').put(0)
   time.sleep(1)
   print('ADC offsets are calibrated')
-  f=open(path+"/"+pv+"offsets.csv","w")
+  f=open(path+"/offsets.csv","w")
   for i in range(4):
       offset=EpicsSignal(pv+'ADCOffset'+str(i+1)).get()
       f.write(str(offset)+'\n')
