@@ -7,12 +7,12 @@ def main():
     analyze()
 def analyze():
     if data == 'bias':
-        return bias_analysis.bias()
+        return bias_analysis.bias(path,show_plot,save_plot)
 
     elif data == 'dac':
-        dac_analysis.dac()
+        return dac_analysis.dac(path,show_plot,save_plot)
 
     elif data == 'current':
-        current_analysis.current()
+        return current_analysis.current(path,ave_time,num_points,show_plot,save_plot)
     else:
         print("Not supported.")

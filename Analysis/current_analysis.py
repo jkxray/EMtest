@@ -6,12 +6,12 @@ from decimal import Decimal
 import math
 from format import sci_not
 import sys
-from analysis_config import *
-def current():
+def current(path,ave_time,num_points,show_plot,save_plot):
     out=''
     #CURRENT
     range_values=[1,10,100,1000,50e3]
-
+    plt.clf()
+    plt.cla()
     for range_value in range_values:
         plt.close()
         for channel in range(4):
@@ -64,11 +64,11 @@ def current():
             std_str= str(med_std[0])+'e'+str(med_std[2]) if med_std[2] != 0 else str(med_std[0])
             if channel!=3:
                 temp_out=str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\hline'
-                print(temp_out)
+                #print(temp_out)
                 out+=temp_out+'\n'
             else:
                 temp_out=str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\Xhline{3\\arrayrulewidth}'
-                print(temp_out)
+                #print(temp_out)
                 out+=temp_out+'\n'
 
             slope=sci_not(p[0],e[0])

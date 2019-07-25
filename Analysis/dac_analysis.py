@@ -6,17 +6,18 @@ from decimal import Decimal
 import math
 from format import sci_not
 import sys
-from analysis_config import *
-
-def dac():
+plt.clf()
+def dac(path,show_plot,save_plot):
     #DAC
     x = []
     y = []
     dy = []
     line=1
+    out=''
     measured_values=[]
     markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
-
+    plt.clf()
+    plt.cla()
     for channel in range(4):
         with open(path+'/data/dac'+str(channel)+'.csv','r') as csvfile:
             plots = csv.reader(csvfile, delimiter=',')
@@ -46,8 +47,8 @@ def dac():
             offset_str= '('+str(offset[0])+'\\pm'+str(offset[1])+')e'+str(offset[2]) if offset[2] != 0 else str(offset[0])+'\\pm'+str(offset[1])
             med_std=sci_not(dy[2]*3**0.5,dy[2]*3**0.5,True)
             std_str= str(med_std[0])+'e'+str(med_std[2]) if med_std[2] != 0 else str(med_std[0])
-            out=str(channel)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+'\\\\ \\hline'
-            print(out)
+            out+=str(channel)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+'\\\\ \\hline\n'
+            #print(out)
 
     plt.legend()
     plt.xlabel('Set (V)')

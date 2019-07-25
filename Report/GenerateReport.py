@@ -1,66 +1,67 @@
+import sys
+sys.path.append('../Analysis')
 import Analysis
 import datetime
 import csv
-def read_offsets():
-    out=''
-    count=0
-    with open(path+'/offsets.csv','r') as csvfile:
-        plots = csv.reader(csvfile, delimiter=',')
-        for row in plots:
-            if count > 0:
-                out+=', '+row[0]
-            else:
-                out+=row[0]
-            count+=1
-    return out
+
 def main():
     serial_number=''
-    data_path=''
+    path_root='../Tests'
     offsets=''
-    date = datetime.datetime.now().split(' ')[0]
+    test_date=''
+    date = str(datetime.datetime.now()).split(' ')[0]
     for arg in sys.argv:
         if arg.split('=')[0]=='serial_number':
             serial_number=arg.split('=')[1]
-    path=data_path+'/'+serial_number
-    offsets=read_offsets()
-
+        if arg.split('=')[0]=='test_date':
+            test_date=arg.split('=')[1]
+    path=path_root+'/'+serial_number
+    offsets=''
+    with open(path+'/data/offsets.csv','r') as csvfile:
+        count=0
+        plots = csv.reader(csvfile, delimiter=',')
+        for row in plots:
+            if count > 0:
+                offsets+=', '+row[0]
+            else:
+                offsets+=row[0]
+            count+=1
     Analysis.data='bias'
-    Analysis.path = data_path+'/'+serial_number
+    Analysis.path = path
     Analysis.trial_id = '1'
     Analysis.ave_time='1'
     Analysis.num_points=15
-    Analysis.show_plot='y'
-    Analysis.save_plot='n'
+    Analysis.show_plot='n'
+    Analysis.save_plot='y'
     bias_out=Analysis.analyze()
 
     Analysis.data='dac'
-    Analysis.path = data_path+'/'+serial_number
+    Analysis.path = path
     Analysis.trial_id = '1'
     Analysis.ave_time='1'
     Analysis.num_points=15
-    Analysis.show_plot='y'
-    Analysis.save_plot='n'
+    Analysis.show_plot='n'
+    Analysis.save_plot='y'
     dac_out=Analysis.analyze()
 
     Analysis.data='current'
-    Analysis.path = data_path+'/'+serial_number
+    Analysis.path = path
     Analysis.trial_id = '1'
     Analysis.ave_time='1'
     Analysis.num_points=15
-    Analysis.show_plot='y'
-    Analysis.save_plot='n'
-    1ms_current_out=Analysis.analyze()
+    Analysis.show_plot='n'
+    Analysis.save_plot='y'
+    current_out_one=Analysis.analyze()
 
     Analysis.data='current'
-    Analysis.path = data_path+'/'+serial_number
+    Analysis.path = path
     Analysis.trial_id = '1'
     Analysis.ave_time='100'
     Analysis.num_points=15
-    Analysis.show_plot='y'
-    Analysis.save_plot='n'
-    100ms_current_out=Analysis.analyze()
-
-    document=r'''
+    Analysis.show_plot='n'
+    Analysis.save_plot='y'
+    current_out_hund=Analysis.analyze()
+    document=R'''
     %\documentclass{revtex4-1}
     \documentclass{article}%
     %\usepackage{amsmath}%
@@ -77,14 +78,14 @@ def main():
 
     \begin{document}
 
-    \title{NSLS2\_EM Serial \#'''+serial_number+''' Test Report}
+    \title{NSLS2\_EM Serial \#'''+serial_number+r''' Test Report}
     \author{Kon Aoki}
     %\\Colorado College}
-    \date{'''+date+'''}
+    \date{'''+date+r'''}
     \maketitle
 
     \section{Summary}
-    The NSLS2\_EM electrometer serial \#'''+serial_number+''' was tested for its accuracy of readouts.
+    The NSLS2\_EM electrometer serial \#'''+serial_number+r''' was tested for its accuracy of readouts.
 
     %PROCEDURE
     \section{Procedure}
@@ -95,14 +96,14 @@ def main():
     			\item Confirm chassis ground to mains ground
     			\item Confirm outer conductor of coax connector grounded to chassis
     		\end{enumerate}
-    	\item Bias (Test date: '''+date+''')
+    	\item Bias (Test date: '''+test_date+r''')
     		\begin{enumerate}
     			\item Set bias via EPICS \label{itm:1s}
     			\item Measure and record bias output
     			\item Repeat measurement 3 times \label{itm:1l}
     			\item Repeat procedure \ref{itm:1s}-\ref{itm:1l} for biases -10 to 10V in 1V increments
     		\end{enumerate}
-    	\item DAC Output (Test date: '''+date+''')
+    	\item DAC Output (Test date: '''+test_date+r''')
     		\begin{enumerate}
     			\item Set DAC via EPICS \label{itm:2s}
     			\item Measure and record DAC output \label{itm:2s2}
@@ -110,7 +111,7 @@ def main():
     			\item Repeat procedure \ref{itm:2s}-\ref{itm:2l} for outputs -10 to 10V in 1V increments \label{itm:l2}
     			\item Repeat all steps for each channel
     		\end{enumerate}
-    	\item Current measurement at 1ms averaging time (Test date: '''+date+''')
+    	\item Current measurement at 1ms averaging time (Test date: '''+test_date+r''')
     		\begin{enumerate}
     			\item Set values per read to 50
     			\item Set averaging time to 1ms
@@ -124,7 +125,7 @@ def main():
     			\item Repeat procedure \ref{itm:3s}-\ref{itm:3l} for ranges 1$\mu$A to 50mA
     			\item Repeat all steps for each channel
     		\end{enumerate}
-    	\item Current measurement at 100ms averaging time (Test date: '''+date+''')
+    	\item Current measurement at 100ms averaging time (Test date: '''+test_date+r''')
     		\begin{enumerate}
     			\item Set values per read to 50
     			\item Set averaging time to 100ms
@@ -142,7 +143,7 @@ def main():
 
     %RESULTS
     \section{Results}
-    ADC Offsets were set at '''+offsets+'''. \\
+    ADC Offsets were set at '''+offsets+r'''. \\
     Confirmed chassis ground to mains ground\\
     Confirmed outer conductor of coax connector grounded to chassis.
     %Bias
@@ -159,7 +160,7 @@ def main():
     \begin{tabular}{|l|l|l|}
     \hline
     Slope & Offset (V) & Median STD (V)\\ \hline
-    '''+bias_out+'''
+    '''+bias_out+r'''
     \end{tabular}
     \end{table}
 
@@ -176,7 +177,7 @@ def main():
     \begin{tabular}{|l|l|l|l|}
     \hline
     Channel & Slope & Offset (V) & Median STD (V)\\ \hline
-    '''+dac_out+'''
+    '''+dac_out+r'''
     \end{tabular}
     \end{table}
 
@@ -218,7 +219,7 @@ def main():
     \begin{tabular}{|l|l|l|l|l|}
     \hline
     Channel & Range ($\mu$A) & Slope & Offset ($\mu$A) & Median STD ($\mu$A)\\ \Xhline{3\arrayrulewidth}
-    '''+1ms_current_out+'''
+    '''+current_out_one+r'''
     \end{tabular}
     \end{table}
 
@@ -262,7 +263,7 @@ def main():
     \begin{tabular}{|l|l|l|l|l|}
     \hline
     Channel & Range ($\mu$A) & Slope & Offset ($\mu$A) & Median STD ($\mu$A)\\ \Xhline{3\arrayrulewidth}
-    '''+100ms_current_out+'''
+    '''+current_out_hund+r'''
     \end{tabular}
     \end{table}
 
@@ -270,6 +271,11 @@ def main():
     \end{document}
     '''
 
-    f = open(data_path+"../Unit"+serial_number+"_report.tex","w")
+    report_path=path+"/Unit"+serial_number+"_report.tex"
+    print("Report generated at "+report_path)
+    f = open(report_path,"w")
     f.write(document)
     f.close()
+
+if __name__ == "__main__":
+    main()

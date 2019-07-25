@@ -5,8 +5,8 @@ import csv
 from decimal import Decimal
 import math
 from format import sci_not
-from analysis_config import *
-def bias():
+
+def bias(path,show_plot,save_plot):
     #BIAS
     x = []
     y = []
@@ -14,7 +14,8 @@ def bias():
     line=1
     measured_values=[]
     markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
-
+    plt.clf()
+    plt.cla()
     with open(path+'/data/bias.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
         next(csvfile)
@@ -41,7 +42,7 @@ def bias():
         med_std=sci_not(dy[2]*3**0.5,dy[2]*3**0.5,True)
         std_str= str(med_std[0])+'e'+str(med_std[2]) if med_std[2] != 0 else str(med_std[0])
         out='$'+slope_str+'$ & $'+offset_str+'$ & '+std_str+'\\\\ \\hline'
-        print(out)
+        #print(out)
     plt.legend()
     plt.xlabel('Set (V)')
     plt.ylabel('Measurement (V)')
