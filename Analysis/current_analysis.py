@@ -8,6 +8,7 @@ from format import sci_not
 import sys
 from analysis_config import *
 def current():
+    out=''
     #CURRENT
     range_values=[1,10,100,1000,50e3]
 
@@ -23,7 +24,7 @@ def current():
             dyo=[]
             markers= [',', 'x', '+', 'v','^', '<', '>', 's', 'd']
             line=0
-            with open(path+'/data/'+ave_time+'ms_current'+str(channel)+'.'+trial_id+'.csv','r') as csvfile:
+            with open(path+'/data/'+ave_time+'ms_current'+str(channel)+'.csv','r') as csvfile:
                 plots = csv.reader(csvfile, delimiter=',')
                 next(csvfile)
                 line+=1
@@ -62,10 +63,13 @@ def current():
             med_std=sci_not(dyo[round(len(dyo)/2)]*num_points**0.5,dyo[round(len(dyo)/2)]*num_points**0.5,True)
             std_str= str(med_std[0])+'e'+str(med_std[2]) if med_std[2] != 0 else str(med_std[0])
             if channel!=3:
-                print(str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\hline')
+                temp_out=str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\hline'
+                print(temp_out)
+                out+=temp_out+'\n'
             else:
-                print(str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\Xhline{3\\arrayrulewidth}')
-            #\\\\ \\Xhline{3\\arrayrulewidth}
+                temp_out=str(channel)+' & '+str(range_value)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+' \\\\ \\Xhline{3\\arrayrulewidth}'
+                print(temp_out)
+                out+=temp_out+'\n'
 
             slope=sci_not(p[0],e[0])
             offset=sci_not(p[1],e[1])
@@ -87,3 +91,4 @@ def current():
         print('Not showing plot')
     if save_plot=='n':
         print('not saving plot')
+    return out

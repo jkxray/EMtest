@@ -18,7 +18,7 @@ def dac():
     markers= ['.', ',', 'x', '+', 'v', '^', '<', '>', 's', 'd']
 
     for channel in range(4):
-        with open(path+'/data/dac'+str(channel)+'.'+trial_id+'.csv','r') as csvfile:
+        with open(path+'/data/dac'+str(channel)+'.csv','r') as csvfile:
             plots = csv.reader(csvfile, delimiter=',')
             next(csvfile)
             for row in plots:
@@ -46,7 +46,8 @@ def dac():
             offset_str= '('+str(offset[0])+'\\pm'+str(offset[1])+')e'+str(offset[2]) if offset[2] != 0 else str(offset[0])+'\\pm'+str(offset[1])
             med_std=sci_not(dy[2]*3**0.5,dy[2]*3**0.5,True)
             std_str= str(med_std[0])+'e'+str(med_std[2]) if med_std[2] != 0 else str(med_std[0])
-            print(str(channel)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+'\\\\ \\hline')
+            out=str(channel)+' & $'+slope_str+'$ & $'+offset_str+'$ & '+std_str+'\\\\ \\hline'
+            print(out)
 
     plt.legend()
     plt.xlabel('Set (V)')
@@ -61,3 +62,4 @@ def dac():
         print('Not showing plot')
     if save_plot=='n':
         print('not saving plot')
+    return out
