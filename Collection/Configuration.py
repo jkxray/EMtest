@@ -18,7 +18,6 @@ averaging_time = 'none' #in seconds
 num_points = 100
 input_size = 15
 saturation_multiplier=1.1
-trial_id='0'
 values_per_read=50
 help_flag=False
 for arg in sys.argv:
@@ -43,8 +42,6 @@ for arg in sys.argv:
         saturation_multiplier=float(arg.split('=')[1])
     if arg.split('=')[0]=='input_size':
         input_size=int(arg.split('=')[1])
-    if arg.split('=')[0]=='trial_id':
-        trial_id=arg.split('=')[1]
     if arg.split('=')[0]=='values_per_read':
         values_per_read=arg.split('=')[1]
 if help_flag==False:
