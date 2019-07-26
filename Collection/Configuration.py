@@ -61,7 +61,10 @@ if help_flag==False:
     time.sleep(0.5)
     EpicsSignal(pv+'TS:TSAcquire').put(1) #start acquiring
     time.sleep(0.5)
-    pro = Prologix(port)
+    try:
+        pro = Prologix(port)
+    except:
+        print("no ports attatched")
 
 
     if data == 'none':
