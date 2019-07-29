@@ -10,6 +10,11 @@ from Prologix import Prologix
 
 from Configuration import *
 def calibrate():
+  for i in range(4):
+      EpicsSignal(pv+'CurrentScale'+str(i+1)).put(1)
+      EpicsSignal(pv+'CurrentOffset'+str(i+1)).put(0)
+  EpicsSignal(pv+'Range').put(0)
+  time.sleep(1)
   EpicsSignal(pv+'CalibrationMode').put(1)
   time.sleep(1)
   EpicsSignal(pv+'CopyADCOffsets.PROC').put(0)
