@@ -6,12 +6,13 @@ from decimal import Decimal
 import math
 from format import sci_not
 import sys
-
+import pandas as pd
 def scan(path):
     i=0
     x=0
     y=-1
     out=''
+
     fluxrr_pd=[]
     fluxrr_d=[]
     fluxrr_d_temp=[]
@@ -24,6 +25,9 @@ def scan(path):
     Gxs=[]
     x_contrasts=[]
     temp_z=0
+    colnames=['X', 'Y', 'Z','PD','A','B','C','D']
+    data = pd.read_csv(path+'/scan_0.005mm.csv', names=colnames, header=None)
+    print(data.describe())
     with open(path+'/scan_0.005mm.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
 
