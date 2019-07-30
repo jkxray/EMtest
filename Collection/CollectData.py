@@ -14,6 +14,7 @@ import CollectDAC
 import Calibrate
 import CollectBias
 import CollectCurrent
+import CollectScan
 if data == 'calibrate':
     Calibrate.calibrate()
 elif data == 'bias':
@@ -25,6 +26,7 @@ elif data == 'dac':
 elif data == 'current':
     print('Collecting current.')
     CollectCurrent.current()
-
+elif data == 'scan':
+    CollectScan.scan()
 else:
     print("Not supported.")
