@@ -17,8 +17,10 @@ def analyze():
     elif data == 'scan':
         print('scan')
         return scan_analysis.scan(path)
-    elif data == 'scan_stats':
-        return scan_analysis_stats.scan(path)
+    elif data == 'scan_stats_z':
+        return scan_analysis_stats.scan_z(path)
+    elif data == 'scan_stats_x':
+        return scan_analysis_stats.scan_x(path)
     else:
         print(data+" is not supported.")
 analyze()
