@@ -20,5 +20,5 @@ def analyze():
     elif data == 'scan_stats':
         return scan_analysis_stats.scan(path)
     else:
-        print("Not supported.")
+        print(data+" is not supported.")
 analyze()

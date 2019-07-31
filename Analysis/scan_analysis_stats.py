@@ -6,13 +6,13 @@ from decimal import Decimal
 import math
 from format import sci_not
 import sys
-import pandas as pd
+#import pandas as pd
 def scan(path):
     i=0
     x=0
     y=-1
     out=''
-
+    size=401
     fluxrr_pd=[]
     fluxrr_d=[]
     fluxrr_d_temp=[]
@@ -25,9 +25,9 @@ def scan(path):
     Gxs=[]
     x_contrasts=[]
     temp_z=0
-    colnames=['X', 'Y', 'Z','PD','A','B','C','D']
-    data = pd.read_csv(path+'/scan_0.005mm.csv', names=colnames, header=None)
-    print(data.describe())
+    #colnames=['X', 'Y', 'Z','PD','A','B','C','D']
+    #data = pd.read_csv(path+'/scan_0.005mm.csv', names=colnames, header=None)
+    #print(data.describe())
     with open(path+'/scan_0.005mm.csv','r') as csvfile:
         plots = csv.reader(csvfile, delimiter=',')
 
@@ -41,7 +41,7 @@ def scan(path):
             C=float(row[6])/1e6
             D=float(row[7])/1e6
             sum=A+B+C+D
-            x=i%201
+            x=i%size
             if x==0:
                 y+=1
 
@@ -75,6 +75,42 @@ def scan(path):
     print(x_epics_arr[len(x_epics_arr)-1])
     #plt.scatter(np.array(x_epics_arr)-25.05,Gxs)
     #plt.scatter(np.array(z_epics_arr)-38.808,Gzs)
-    plt.scatter(np.array(z_epics_arr)-38.808,z_contrasts)
-    plt.scatter(np.array(x_epics_arr)-25.05,x_contrasts)
+    z_epics_sqr_arr=[]
+    z_contrasts_sqr=[]
+    for i in range(size):
+        z_epics_sqr_arr.append(z_epics_arr[i*size:(i+1)*size])
+        z_contrasts_sqr.append(z_contrasts[i*size:(i+1)*size])
+    #rotate z matrix to go top to bottom
+    z_epics_sqr_arr=np.rot90(z_epics_sqr_arr)
+    z_contrasts_sqr=np.rot90(z_contrasts_sqr)
+
+
+    z_epics_sqr_arr_cropped=[]
+    z_contrasts_sqr_cropped=[]
+    for i in range(size):
+        offset=0
+        for j in range(size):
+            if z_contrasts_sqr[i][j] < 1.5 and z_contrasts_sqr[i][j] > -1.5:
+
+                offset=z_epics_sqr_arr[i][j]
+                #print(offset)
+                break
+        #print(offset)
+        z_epics_sqr_arr[i]=np.array(z_epics_sqr_arr[i])-offset
+        #z_epics_sqr_arr[i]=z_epics_sqr_arr[i][:] = [x - offset for x in z_epics_sqr_arr[i]]
+        min=int(size*3/7)
+        max=int(size*4/7)
+
+        z_epics_sqr_arr_cropped.append(z_epics_sqr_arr[i][min:max])
+        z_contrasts_sqr_cropped.append(z_contrasts_sqr[i][min:max])
+    color=[]
+    half = int(size/2)
+    for i in range(half):
+        color.append((i/half,0,50/255))
+    for i in range(size-half):
+        color.append((1,float(i)/(size-half),50/255))
+    for i in range(size):
+        plt.scatter(np.array(z_epics_sqr_arr_cropped[i]),z_contrasts_sqr_cropped[i],c=color[i])
+    #plt.scatter(np.array(z_epics_sqr_arr[100]),z_contrasts_sqr[100],c=color[100])
+        #plt.scatter(np.array(x_epics_sqr_arr[i])-25.05,x_contrasts_sqr[i],c=color[i])
     plt.show()

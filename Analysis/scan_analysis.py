@@ -31,7 +31,7 @@ def scan(path):
             D=float(row[7])/1e6
             sum=A+B+C+D
             if i>0:
-                if i%201==0:
+                if i%401==0:
                     f.write(out+'\n')
                     out=''
                     fpd.write(outpd+'\n')
