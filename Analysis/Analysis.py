@@ -5,6 +5,8 @@ import dac_analysis
 import drift_analysis
 import scan_analysis
 import scan_analysis_stats
+import bias_scan_analysis
+
 def analyze():
     if data == 'bias':
         return bias_analysis.bias(path,show_plot,save_plot)
@@ -21,6 +23,9 @@ def analyze():
         return scan_analysis_stats.scan(path,'z')
     elif data == 'scan_stats_x':
         return scan_analysis_stats.scan(path,'x')
+    elif data == 'bias_scan':
+        return bias_scan_analysis.bias(path,show_plot,save_plot)
     else:
         print(data+" is not supported.")
-analyze()
+if report == 'n':
+    analyze()

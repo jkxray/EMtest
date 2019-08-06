@@ -26,6 +26,7 @@ def main():
             else:
                 offsets+=row[0]
             count+=1
+    Analysis.report='y'
     Analysis.data='bias'
     Analysis.path = path
     Analysis.trial_id = '1'
@@ -35,6 +36,7 @@ def main():
     Analysis.save_plot='y'
     bias_out=Analysis.analyze()
 
+    Analysis.report='y'
     Analysis.data='dac'
     Analysis.path = path
     Analysis.trial_id = '1'
@@ -44,6 +46,7 @@ def main():
     Analysis.save_plot='y'
     dac_out=Analysis.analyze()
 
+    Analysis.report='y'
     Analysis.data='current'
     Analysis.path = path
     Analysis.trial_id = '1'
@@ -53,6 +56,7 @@ def main():
     Analysis.save_plot='y'
     current_out_one=Analysis.analyze()
 
+    Analysis.report='y'
     Analysis.data='current'
     Analysis.path = path
     Analysis.trial_id = '1'

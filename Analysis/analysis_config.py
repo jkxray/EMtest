@@ -12,6 +12,7 @@ ave_time='1'
 num_points=15
 show_plot='y'
 save_plot='n'
+report='n'
 for arg in sys.argv:
     if arg.split('=')[0]=='path':
         path=arg.split('=')[1]
