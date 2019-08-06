@@ -15,6 +15,7 @@ import Calibrate
 import CollectBias
 import CollectCurrent
 import CollectScan
+import CollectScan_Drift2
 import CollectBiasScan
 if data == 'calibrate':
     Calibrate.calibrate()
@@ -31,5 +32,7 @@ elif data == 'scan':
     CollectScan.scan()
 elif data=='bias_scan':
     CollectBiasScan.scan()
+elif data=='scan_drift2':
+    CollectScan_Drift2.scan()
 else:
     print("Not supported.")
