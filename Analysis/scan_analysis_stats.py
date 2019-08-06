@@ -64,8 +64,8 @@ def scan(path,axis):
     flux_pd=np.mean(fluxrr_pd)
     sens_d=np.mean(sensrr_d)
     #print them out
-    print('pd flux: '+str(flux_pd))
-    print('diamond sensitivity: '+str(sens_d))
+    print('pd flux: '+str(flux_pd)+' +/- '+str(np.std(fluxrr_pd)/(len(fluxrr_pd)**0.5)))
+    print('diamond sensitivity: '+str(sens_d)+' +/- '+str(np.std(sensrr_d)/(len(sensrr_d)**0.5)))
 
     epics_sqr_arr=[]
     contrasts_sqr=[]
